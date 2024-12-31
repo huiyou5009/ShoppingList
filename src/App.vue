@@ -39,10 +39,9 @@
                       </label>
 
                       <!--counter 數字數 -->
-                      <p class="counter" :class="{overlimit: characterCount>20}"> 
-                        Character Count：{{characterCount}}/20 
-                      </p>
-
+                      <p class="counter" :class="{overlimit: characterCount>characterLimit}"> 
+                        Character Count：{{ characterCount }}/{{ characterLimit }}
+                      </p> 
                 </div>
               </section>
               
@@ -206,14 +205,15 @@ const characterCount = computed(()=>{
   return newProduct.value.length
 });
 
+const characterLimit = ref(30);  // 字數限制
 
-const nosubmit = (e) => {
-  if(newProduct.value.trim().length > 20) 
-  {e.preventDefault();
-    alert("輸入框不能超過20個字！");           
+const nosubmit = (over) => {
+  if(newProduct.value.trim().length > characterLimit.value) {            
+    over.preventDefault();  // 阻止提交
+    const overLimit = `輸入框不能超過${characterLimit.value}個字！`;
+    alert(overLimit);           
   }
 };
-
 
 const clear = () => {
   newProduct.value = "";
@@ -290,7 +290,7 @@ watch(ALLcheckbox, (CB) => {
 });
 
 
-// 勾選框全選與否 ALL的變化
+// 勾選框全選與否 影響ALL的變化
 watch(products, () => {
   const allChecked = products.value.every((product) => product.checked); // 確認是否全選
   if (ALLcheckbox.value !== allChecked) {
